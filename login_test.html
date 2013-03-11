@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/crypt/api.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/crypt/bigint.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/crypt/barrett.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/crypt/rsa1.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/crypt/aes1.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/crypt/md5.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/crypt/pad-zeropadding.js"></script>
+        <script language="JavaScript" type="text/javascript" src="{{sslCdnUrl}}js/jquery-1.7.2.js"></script>
+ </head>
+    <body>
+        <script>
+       var p;
+       var s;
+       $(document).ready(function(){
+            //获得token
+            $.ajax({
+                    url:'{{sslUrl}}user/request_token',
+                    type:'POST',
+                    dataType:'jsonp',
+                    success:function(data){
+                         //var data = eval("("+data+")")
+                         p = data.p;
+                         s = data.s;
+                    } 
+
+                });
+        });
+
+
+
+        function process_submit(){
+            var r = cryptico.uid();
+            var enc1_v = cryptico.rsa_enc(p,r,s);
+            $("#enc1").val(enc1_v);
+            
+            var password = $("#password").val();
+            password_enc = cryptico.aes_enc(password,r);
+            $("#password").val(password_enc);
+            return true;
+        }
+        </script>
+
+        <form action='{{sslUrl}}/process.php' method=GET>
+            <input type="text" name="username">
+            <input type="text" name="enc1" id="enc1">
+            <input type="password" name="password" id="password">
+            <input type="submit" name="submit" onclick="process_submit();">
+        </form>
+
+        
+    </body>
+</html>
