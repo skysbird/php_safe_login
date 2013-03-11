@@ -56,13 +56,11 @@ class Decrypt{
     */
     public function rsa_decrpyt($enc,&$decrypted){
             $enc = base64_decode($enc);
-            $enc = base64_encode(pack("H*",$enc));
+            $encrypted = pack("H*",$enc);
             
             $private = $this->private_key;
             $public = $this->public_key;
 
-            $encrypted = base64_decode($enc);
-           
             $r = openssl_private_decrypt($encrypted, $decrypted, $private,OPENSSL_NO_PADDING);
             if($r){
                $decrypted = strrev($decrypted);
